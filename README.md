@@ -13,7 +13,7 @@ sudo apt install -y python3 python3-pip python3-venv nginx git
 ---
 Step 3 - Clone the Repository
 ```bash
-cd /home/$USER
+cd /root
 git clone https://github.com/YOUR_REPO
 cd YOUR_REPO
 ```
@@ -29,19 +29,18 @@ Step 5 - Create a Gunicorn Systemd Service
 ```bash
 sudo nano /etc/systemd/system/gunicorn.service
 ```
-Paste the following (replace `USERNAME` with your actual Linux username):
 ```ini
 [Unit]
 Description=Gunicorn daemon for Django
 After=network.target
 
 [Service]
-User=USERNAME
-Group=www-data
-WorkingDirectory=/home/USERNAME/YOUR_REPO
-ExecStart=/home/USERNAME/YOUR_REPO/venv/bin/gunicorn \
+User=root
+Group=root
+WorkingDirectory=/root/YOUR_REPO
+ExecStart=/root/YOUR_REPO/venv/bin/gunicorn \
           --workers 3 \
-          --bind unix:/home/USERNAME/YOUR_REPO/gunicorn.sock \
+          --bind unix:/root/YOUR_REPO/gunicorn.sock \
           practice.wsgi:application
 
 [Install]
@@ -57,11 +56,10 @@ sudo systemctl enable gunicorn
 sudo systemctl status gunicorn
 ```
 ---
-Step 6 — Configure Nginx
+Step 6 - Configure Nginx
 ```bash
 sudo nano /etc/nginx/sites-available/YOUR_REPO
 ```
-Paste the following (replace `USERNAME` and `your_server_ip`):
 ```nginx
 server {
     listen 80;
@@ -70,12 +68,12 @@ server {
     location = /favicon.ico { access_log off; log_not_found off; }
 
     location /static/ {
-        root /home/USERNAME/YOUR_REPO;
+        root /home/root/YOUR_REPO;
     }
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/home/USERNAME/YOUR_REPO/gunicorn.sock;
+        proxy_pass http://unix:/home/root/YOUR_REPO/gunicorn.sock;
     }
 }
 ```
