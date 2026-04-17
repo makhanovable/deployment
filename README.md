@@ -86,6 +86,7 @@ sudo systemctl restart nginx
 ---
 Step 7 - Open Firewall Ports
 ```bash
+sudo ufw allow OpenSSH
 sudo ufw allow 'Nginx Full'
 sudo ufw enable
 ```
